@@ -1,8 +1,10 @@
-const unsigned int const * GPIO_ADDRESS = (unsigned int*) 0x20200000;
+#include <stdint.h>
 
-unsigned int* GetGpioAddress(void)
+const uint32_t GPIO_ADDRESS = 0x20200000;
+
+static uint32_t * GetGpioAddress(void)
 {
-  return (unsigned int*) GPIO_ADDRESS;
+  return (uint32_t *) GPIO_ADDRESS;
 }
 
 void SetGpioFunction(int pin, int function)
@@ -11,9 +13,9 @@ void SetGpioFunction(int pin, int function)
     return;
 
   int select_register = pin / 10;
-  int function_select = pin % 10;
+  int function_select = (pin % 10) * 3;
   
-  unsigned int * addr = GetGpioAddress();
+  uint32_t * addr = GetGpioAddress();
   addr[select_register] = function << function_select;
 }
 
@@ -25,15 +27,14 @@ void SetGpio(int pin, int val)
   int set = pin / 32;
   int bit = 1 << (pin & 0x1f);
 
-  unsigned int * addr = GetGpioAddress();
+  uint32_t * addr = GetGpioAddress();
 
   if (val)
   {
-    addr[7 + set] = bit;
+    addr[7+set] = bit;
   }
   else
   {
-    addr[10 + set] = bit;
+    addr[10+set] = bit;
   }
 }
-

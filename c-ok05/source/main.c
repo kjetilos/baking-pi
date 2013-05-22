@@ -1,6 +1,8 @@
-unsigned int pattern = 0xf0f0f0f0;
+#include <stdint.h>
 
-void main()
+const uint32_t PATTERN = 0xf0f0f0f0;
+
+int main(void)
 {
   int pos = 0;
   int value = 0;
@@ -8,8 +10,8 @@ void main()
   SetGpioFunction(16, 1);
   while (1) 
   {
-    value = pattern & (1 << pos);
+    value = PATTERN & (1 << pos);
     SetGpio(16, value);
-    wait(50000);
+    Wait(50000);
   }
 }
