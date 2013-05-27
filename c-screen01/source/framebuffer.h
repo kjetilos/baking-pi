@@ -17,6 +17,6 @@ struct FrameBufferInfo
   uint32_t size;
 };
 
-const struct FrameBufferInfo* InitializeFrameBuffer(uint32_t width, uint32_t height, uint32_t depth);
+uint16_t * InitializeFrameBuffer(uint32_t width, uint32_t height, uint32_t depth);
 
 #endif

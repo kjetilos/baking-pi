@@ -23,8 +23,8 @@ void MailboxWrite(uint32_t message, uint32_t channel)
   if (message & 0xf != 0 || channel > 15)
     return;
 
-  uint32_t write_flag = 0;
-  while ( write_flag == 0 )
+  uint32_t write_flag = 1;
+  while ( write_flag != 0 )
     write_flag = mailbox->status & 0x80000000;
 
   uint32_t value = message + channel;
@@ -39,8 +39,8 @@ uint32_t MailboxRead(uint32_t channel)
   uint32_t mail = 0;
 
   while ( true ) {
-    uint32_t read_flag = 0;
-    while ( read_flag == 0 )
+    uint32_t read_flag = 1;
+    while ( read_flag != 0 )
       read_flag = mailbox->status & 0x40000000;
     
     mail = mailbox->read;

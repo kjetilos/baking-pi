@@ -1,10 +1,10 @@
 #include "framebuffer.h"
 #include <stdint.h>
 
-struct FrameBufferInfo FrameBufferInfo;
+struct FrameBufferInfo FrameBufferInfo = {0};
 static const uint32_t CHANNEL_GPU = 1;
 
-const struct FrameBufferInfo* InitializeFrameBuffer(uint32_t width, uint32_t height, uint32_t depth)
+uint16_t * InitializeFrameBuffer(uint32_t width, uint32_t height, uint32_t depth)
 {
   if (width > 4096 || height > 4096 || depth > 32)
     return 0;
@@ -21,19 +21,15 @@ const struct FrameBufferInfo* InitializeFrameBuffer(uint32_t width, uint32_t hei
   FrameBufferInfo.size = 0;
   
   LedOff();
-  MailboxWrite(&FrameBufferInfo, CHANNEL_GPU);
+  uint32_t value = (uint32_t)(&FrameBufferInfo) | 0x40000000;
+  MailboxWrite(value, CHANNEL_GPU);
   Blink(1);
 
-  uint32_t mail = MailboxRead(CHANNEL_GPU);
-  Blink(2);
+  uint32_t mail = 0;
+  do {
+    mail = MailboxRead(CHANNEL_GPU);
+    Blink(1);
+  } while ((mail != 0) && (FrameBufferInfo.pointer == 0));
 
-  if (mail == 0)
-    return 0;
-
-  /* Wait for the GPU filling in the framebuffer pointer */
-  LedOff();
-  while (FrameBufferInfo.pointer == 0) ;
-  LedOn();
-
-  return & FrameBufferInfo;
+  return (uint16_t *) FrameBufferInfo.pointer;
 }

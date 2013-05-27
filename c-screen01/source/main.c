@@ -11,12 +11,17 @@ int main(void)
 
   SetGpioFunction(16, 1);
   LedOn();
-  
-  const struct FrameBufferInfo * fb_info = InitializeFrameBuffer(width, height, depth);
+  Wait(50000);
+  uint16_t* fb = InitializeFrameBuffer(width, height, depth);
 
-  uint16_t* fb = (uint16_t*) fb_info->pointer;
+  LedOn();
+  while (fb == 0) {
+    Blink(1);
+    Wait(100000);
+  }
+
   // rgb 565 
-  uint16_t color = 0xcccc;
+  uint16_t color = 0x1234;
   size_t y;
   size_t x;
   size_t point;
@@ -25,6 +30,8 @@ int main(void)
     for (point = 0; point < height*width; point++) {
       fb[point] = color;
     }
+    color++;
+    Blink(2);
   }
 
 }
