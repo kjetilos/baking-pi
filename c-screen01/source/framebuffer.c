@@ -4,7 +4,7 @@
 struct FrameBufferInfo FrameBufferInfo = {0};
 static const uint32_t CHANNEL_GPU = 1;
 
-uint16_t * InitializeFrameBuffer(uint32_t width, uint32_t height, uint32_t depth)
+struct FrameBufferInfo * InitializeFrameBuffer(uint32_t width, uint32_t height, uint32_t depth)
 {
   if (width > 4096 || height > 4096 || depth > 32)
     return 0;
@@ -31,5 +31,5 @@ uint16_t * InitializeFrameBuffer(uint32_t width, uint32_t height, uint32_t depth
     Blink(1);
   } while ((mail != 0) && (FrameBufferInfo.pointer == 0));
 
-  return (uint16_t *) FrameBufferInfo.pointer;
+  return &FrameBufferInfo;
 }
