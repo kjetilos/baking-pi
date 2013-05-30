@@ -26,9 +26,11 @@ error$:
 	b error$
 
 noError$:
-	mov r4, r0
+	/* r0 is now the FrameBufferInfo address */
+	bl SetGraphicsAddress
 	
 render$:
+	
 	fbAddr .req r3
 	ldr r3, [r4, #32]
 
