@@ -37,21 +37,18 @@ int main(void)
   uart_puts("InitializeFrameBuffer\r\n");
   struct FrameBufferInfo* fb_info = InitializeFrameBuffer(width, height, depth);
 
-  uint32_t color = 0xff000000;
-  size_t y;
-  size_t x;
-  size_t point;
-  uint32_t* fb = (uint32_t*)fb_info->pointer;
-
+  uint32_t seed = 0;
   uart_puts("Painting\r\n");
-  while (true) {
-    for (y=0; y<height; y++) {
-      for (x=0; x<width; x++) {
-        fb[y*width + x] = color;
-      }
-      color = (color + 1) | 0xff000000;
-    }
 
+  SetFrameBufferInfo(fb_info);
+  while (true) {
+    uint32_t x0 = NextRandom() % 400;
+    uint32_t y0 = NextRandom() % 400;
+    uint32_t x1 = NextRandom() % 400;
+    uint32_t y1 = NextRandom() % 400;
+    uint32_t color = NextRandom() | 0xff000000;
+    SetColor(color);
+    DrawLine(x0, y0, x1, y1);
   }
 
 }
