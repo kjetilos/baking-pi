@@ -3,7 +3,7 @@ CC=gcc
 SOURCES=../source/drawing.c
 CFLAGS=-std=c99
 
-test: drawing.o driver.o random.o string.o
+test: driver.o random.o string.o font.o
 	$(CC) -o $@ $^
 
 driver.o: driver.c
@@ -17,6 +17,9 @@ random.o: ../source/random.c
 
 string.o: ../source/string.c
 	$(CC) $(CFLAGS) -o $@ -c $^
+
+font.o: font.s
+	$(CC) -o $@ -c $^
 
 clean:
 	rm -f *.o test

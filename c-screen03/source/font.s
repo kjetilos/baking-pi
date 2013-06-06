@@ -1,4 +1,4 @@
-.section .rodata
+.section .data
 .align 4
 .globl font
 font:

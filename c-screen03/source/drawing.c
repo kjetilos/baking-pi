@@ -62,53 +62,14 @@ void DrawLine(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1)
 	}
 }
 
-const uint8_t letter_a[] = {
-	0x00,
-	0x00,
-	0x00,
-	0x10,
-	0x28,
-	0x28,
-	0x28,
-	0x44,
-	0x44,
-	0x7c,
-	0xc6,
-	0x82,
-	0x00,
-	0x00,
-	0x00,
-	0x00,
-};
-
+extern const uint8_t font[];
 
 void DrawChar(char c, uint32_t x, uint32_t y)
 {
 	if (c > 127)
 		return;
 
-/*
-//	uint8_t * char_addr = font + c * 16;
-	int row;
-
-	for (row = 0; row < 16; row++)
-	{
-		uint8_t bits = 0xff; //*char_addr;
-		uint8_t bit;
-		for (bit = 7; bit >= 0; bit--)
-		{
-			uint8_t mask = 0x1 << bit;
-			if (bits & mask) 
-			{
-				DrawPixel(x + (7-bit), y);
-			}
-		}
-		y++;
-//		char_addr++;
-	}
-	*/
-//	uint32_t char_begin = font + c * 16;
-	uint8_t * char_addr = letter_a;
+	const uint8_t * char_addr = font + c * 16;
 	int row;
 
 	for (row = 0; row < 16; row++)
