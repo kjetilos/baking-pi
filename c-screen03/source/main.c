@@ -42,13 +42,11 @@ int main(void)
 
   SetFrameBufferInfo(fb_info);
   while (true) {
-    uint32_t x0 = NextRandom(fb_info->width);
-    uint32_t y0 = NextRandom(fb_info->height);
-    uint32_t x1 = NextRandom(fb_info->width);
-    uint32_t y1 = NextRandom(fb_info->height);
-    uint32_t color = NextRandom(0x00ffffff) | 0xff000000;
-    SetColor(color);
-    DrawLine(x0, y0, x1, y1);
+    SetColor(0xff00ff00);
+    DrawLine(0,0, 400, 600);
+    DrawChar('A', 10, 10);
+    DrawChar('B', 20, 20);
+    DrawChar('K', 50, 50);
   }
 
 }
