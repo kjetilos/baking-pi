@@ -10,7 +10,7 @@ _start:
 	mov	r6, #0
 	mov	r7, #0
 	mov	r8, #0
-        b       .L2
+	b .L2
  
 .L1:
 	/* store multiple at r4. */

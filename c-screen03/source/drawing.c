@@ -88,3 +88,27 @@ void DrawChar(char c, uint32_t x, uint32_t y)
 		char_addr++;
 	}
 }
+
+void DrawString(const char * s, uint32_t x, uint32_t y)
+{
+	uint32_t x0 = x;
+	while (*s != 0)
+	{
+		char c = *s;
+		DrawChar(c, x, y);
+		if (c == '\n')
+		{
+			x = x0;
+			y = y + 16;
+		}
+		else if (c == '\t')
+		{
+			x = x + 5 * 8;
+		}
+		else
+		{
+			x = x + 8;
+		}
+		s++;
+	}
+}
