@@ -1,8 +1,6 @@
 /* uart.h - UART initialization & communication */
- 
-#ifndef UART_H
-#define UART_H
- 
+#pragma once
+
 #include <stdint.h>
  
 /*
@@ -22,4 +20,3 @@ void uart_putc(uint8_t byte);
  */
 void uart_puts(const char *str);
  
-#endif // #ifndef UART_H

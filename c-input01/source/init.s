@@ -21,4 +21,4 @@ _start:
 	cmp	r4, r9
 	blo	.L1
 	
-	b main
+	b arm_begin

@@ -1,5 +1,6 @@
 #include "framebuffer.h"
 #include "uart.h"
+#include "mailbox.h"
 #include <stdint.h>
 
 struct FrameBufferInfo FrameBufferInfo = {0};

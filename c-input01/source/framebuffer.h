@@ -1,6 +1,4 @@
-#ifndef FRAMEBUFFER_H
-#define FRAMEBUFFER_H
-
+#pragma once
 #include <stdint.h>
 
 struct FrameBufferInfo
@@ -19,4 +17,3 @@ struct FrameBufferInfo
 
 struct FrameBufferInfo * InitializeFrameBuffer(uint32_t width, uint32_t height, uint32_t depth);
 
-#endif

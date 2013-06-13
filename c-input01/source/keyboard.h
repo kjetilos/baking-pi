@@ -1,8 +1,5 @@
-#ifndef KEYBOARD_H
-#define KEYBOARD_H
+#pragma once
 
 int KeyboardUpdate();
 int KeyWasDown(int key) ;
 char KeyboardGetChar();
-
-#endif

@@ -1,7 +1,6 @@
 /* mmio.h - access to MMIO registers */
  
-#ifndef MMIO_H
-#define MMIO_H
+#pragma once
  
 #include <stdint.h>
  
@@ -20,5 +19,3 @@ static inline uint32_t mmio_read(uint32_t reg) {
 		 : [data]"=r"(data) : [reg]"r"(ptr));
     return data;
 }
- 
-#endif // #ifndef MMIO_H

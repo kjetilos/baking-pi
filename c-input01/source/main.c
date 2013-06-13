@@ -3,11 +3,12 @@
 #include "tag.h"
 #include "drawing.h"
 #include "keyboard.h"
+#include "string.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
 
-int main(uint32_t r0, uint32_t machtype, uint32_t atags_addr)
+int arm_begin(uint32_t r0, uint32_t machtype, uint32_t atags_addr)
 {
   uint32_t width = 1920;
   uint32_t height = 1200;

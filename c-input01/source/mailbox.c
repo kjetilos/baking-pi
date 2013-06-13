@@ -1,3 +1,4 @@
+#include "mailbox.h"
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -22,7 +23,7 @@ static const uint32_t MAILBOX_EMPTY = 0x40000000;
 
 void MailboxWrite(uint32_t message, uint32_t channel)
 {
-  if (message & 0xf != 0 || channel > 15)
+  if ((message & 0xf) != 0 || channel > 15)
     return;
 
   uint32_t full_flag = 1;
@@ -36,7 +37,7 @@ void MailboxWrite(uint32_t message, uint32_t channel)
 uint32_t MailboxRead(uint32_t channel)
 {
   if (channel > 15)
-    return;
+    return 0;
   
   uint32_t mail = 0;
 

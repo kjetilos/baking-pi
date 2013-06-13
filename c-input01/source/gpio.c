@@ -1,3 +1,4 @@
+#include "timer.h"
 #include <stdint.h>
 
 const uint32_t GPIO_ADDRESS = 0x20200000;

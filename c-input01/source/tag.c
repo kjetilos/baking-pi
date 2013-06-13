@@ -1,13 +1,7 @@
-#include <stdint.h>
+#include "tag.h"
 #include <mmio.h>
 
 static uint32_t atags_base = 0;
-
-struct tag {
-	uint32_t size;
-	uint32_t number;
-	void * data;
-};
 
 void atag_init(uint32_t atags_addr)
 {

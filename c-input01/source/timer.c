@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include "timer.h"
 
 enum {
   SYSTEM_TIMER_BASE = 0x20003000,
