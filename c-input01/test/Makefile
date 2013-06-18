@@ -1,7 +1,11 @@
 CC=gcc
 
 SOURCES=../source/drawing.c
-CFLAGS=-std=c99
+
+CFLAGS = -std=gnu99 -fpack-struct -fshort-wchar -Wall --save-temps
+
+size_test: size_test.c designware20.h
+	$(CC) $(CFLAGS) -D BROADCOM_2835 -o size_test size_test.c
 
 test: driver.o random.o string.o font.o
 	$(CC) -o $@ $^
@@ -22,4 +26,4 @@ font.o: font.s
 	$(CC) -o $@ -c $^
 
 clean:
-	rm -f *.o test
+	rm -f *.o test size_test

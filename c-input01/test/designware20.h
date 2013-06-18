@@ -13,9 +13,8 @@
 #ifndef _HCD_DWC_DESIGNWARE_H
 #define _HCD_DWC_DESIGNWARE_H
 
-#include <platform/platform.h>
 
-#ifdef HCD_DESIGNWARE_20
+#include "types.h"
 
 #define ReceiveFifoSize 20480 /* 16 to 32768 */
 #define NonPeriodicFifoSize 20480 /* 16 to 32768 */
@@ -181,6 +180,7 @@ extern volatile struct CoreGlobalRegs {
 		volatile bool chirpen:1;
 		volatile unsigned _reserved28_31:4;
 	} OtgControl; // +0x0
+	// 32 bit -> 4 byte
 	volatile struct {
 		volatile unsigned _reserved0_1 : 2; // @0
 		volatile bool SessionEndDetected : 1; // @2
@@ -193,6 +193,7 @@ extern volatile struct CoreGlobalRegs {
 		volatile bool DebounceDone : 1; // @19
 		volatile unsigned _reserved20_31 : 12; // @20
 	} OtgInterrupt; // +0x4	
+	// 32 bit -> 4 byte
 	volatile struct {
 		volatile bool InterruptEnable : 1; // @0
 #ifdef BROADCOM_2835
@@ -231,6 +232,8 @@ extern volatile struct CoreGlobalRegs {
 		} DmaRemainderMode : 1; // @23
 		volatile unsigned _reserved24_31 : 8; // @24
 	} Ahb;	// +0x8
+	// 32 bit -> 4 byte
+
 	volatile struct {
 		volatile unsigned toutcal:3; // @0
 		volatile bool PhyInterface : 1; // @3
@@ -264,6 +267,9 @@ extern volatile struct CoreGlobalRegs {
 		volatile bool force_dev_mode:1; // @30
 		volatile unsigned _reserved31:1; // @31
 	} Usb; // +0xc
+
+// 32 bit -> 4 byte
+
 	volatile struct CoreReset {
 		volatile bool CoreSoft : 1; // @0
 		volatile bool HclkSoft : 1; // @1
@@ -293,7 +299,7 @@ extern volatile struct CoreGlobalRegs {
 		volatile unsigned _reserved11_29 : 19; // @11
 		volatile bool DmaRequestSignal : 1; // @30
 		volatile bool AhbMasterIdle : 1; // @31
-	} Reset;  // +0x10
+	} __attribute__ ((__packed__)) Reset;  // +0x10
 	volatile struct CoreInterrupts Interrupt; // +0x14
 	volatile struct CoreInterrupts InterruptMask; // +0x18
 	volatile struct {
@@ -519,15 +525,24 @@ extern volatile struct HostGlobalRegs {
 		volatile unsigned reserved28_30 : 3; // @28
 		volatile bool mode_chg_time:1; // @31
 	} Config; // +0x400
+
+// 4 bytes OK
+
 	volatile struct {
 		volatile unsigned Interval : 16; // @0
 		volatile bool DynamicFrameReload : 1; // @16
 		volatile unsigned _reserved17_31 : 15; // @17
 	} FrameInterval; // +0x404
+
+// 8 bytes OK (+4)
+
 	volatile struct {
 		volatile unsigned FrameNumber : 16; // @0
 		volatile unsigned FrameRemaining : 16; // @16
 	} FrameNumber; // +0x408
+
+// 12 bytes OK (+4)
+
 	volatile u32 _reserved40c; // + 0x40c
 	volatile struct {
 		volatile unsigned SpaceAvailable : 16; // @0
@@ -541,10 +556,19 @@ extern volatile struct HostGlobalRegs {
 		volatile unsigned Channel : 4; // @27
 		volatile unsigned Odd : 1; // @31
 	} FifoStatus; // +0x410
+
+// 20 bytes OK (+8)
+
 	volatile u32 Interrupt; // +0x414
 	volatile u32 InterruptMask; // +0x418
 	volatile u32 FrameList; // +0x41c
+
+// 32 bytes OK (+12)
+
 	volatile u8 _reserved420_440[0x440-0x420]; // +0x420
+
+// 64 bytes OK (+32)
+
 	volatile struct HostPort {
 		volatile bool Connect : 1; // @0
 		volatile bool ConnectDetected : 1; // @1
@@ -562,7 +586,13 @@ extern volatile struct HostGlobalRegs {
 		volatile UsbSpeed Speed : 2; // @17
 		volatile unsigned _reserved19_31 : 13; // @19
 	} Port; // +0x440
+
+// 68 bytes OK (+4)
+
 	volatile u8 _reserved444_500[0x500 - 0x444]; // +0x444
+
+// 256 bytes OK (+188)
+
 	volatile struct HostChannel {
 		volatile struct HostChannelCharacteristic {
 			volatile unsigned MaximumPacketSize : 11; // @0
@@ -604,11 +634,13 @@ extern volatile struct HostGlobalRegs {
 			} PacketId : 2; // @29
 			volatile bool DoPing : 1; // @31
 		} TransferSize; // +0x10
-		volatile void* DmaAddress;  // +0x14
+		volatile u32 DmaAddress;  // +0x14
 		volatile u32 _reserved18; // +0x18
 		volatile u32 _reserved1c; // +0x1c
 	} Channel[ChannelCount]; // +0x500
+	
 	volatile u8 _reserved700_800[0x800 - 0x700]; // +0x700
+
 } *HostPhysical, *Host;
 
 /**
@@ -701,6 +733,5 @@ void ClearReg(volatile const void* reg);
 */
 void SetReg(volatile const void* reg);
 
-#endif // HCD_DESIGNWARE_20
 
 #endif // _HCD_DWC_DESIGNWARE_H

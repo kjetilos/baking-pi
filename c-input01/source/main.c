@@ -23,19 +23,19 @@ int arm_begin(uint32_t r0, uint32_t machtype, uint32_t atags_addr)
 
   uint32_t x = 20;
   uint32_t y = 10;
-
+  UsbInitialise();
   char buf[20];
 
   while (true)
   {
     uart_puts("KeyboardUpdate\r\n");
     int addr = KeyboardUpdate();
-    int_to_char(addr, buf, 10);
-    uart_puts("addr=");
-    uart_puts(buf);
-    uart_puts("\r\n");
+    Wait(150000);
     char c = KeyboardGetChar();
     if (c != 0) {
+      uart_puts("Got character ");
+      uart_putc(c);
+      uart_puts("\r\n");
       if (x >= fb_info->width) 
       {
         x = 20;
@@ -48,7 +48,7 @@ int arm_begin(uint32_t r0, uint32_t machtype, uint32_t atags_addr)
       DrawChar(c, x, y);
       x += 8;
     } else {
-      uart_puts("Null character\r\n");
+      uart_puts("No character\r\n");
     }
   }
 

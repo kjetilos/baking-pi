@@ -7,8 +7,19 @@
 
 # The toolchain to use. arm-none-eabi works, but there does exist 
 # arm-bcm2708-linux-gnueabi.
-ARMGNU ?= /opt/x-tools/arm-2008q3/bin/arm-none-eabi
-LIB_GCC_DIR = /opt/x-tools/arm-2008q3/lib/gcc/arm-none-eabi/4.3.2/
+
+ARMGNU ?= /opt/x-tools/arm-unknown-eabi/bin/arm-unknown-eabi
+LIB_GCC_DIR ?= /opt/x-tools/arm-unknown-eabi/lib/gcc/arm-unknown-eabi/4.7.2
+
+#ARMGNU ?= /opt/x-tools/gcc-arm-none-eabi-4_7-2013q1/bin/arm-none-eabi
+#LIB_GCC_DIR ?= /opt/x-tools/gcc-arm-none-eabi-4_7-2013q1/lib/gcc/arm-none-eabi/4.7.3
+
+#ARMGNU ?= /opt/x-tools/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi
+#LIB_GCC_DIR = /opt/x-tools/arm-unknown-linux-gnueabi/lib/gcc/arm-unknown-linux-gnueabi/4.7.2/
+
+#ARMGNU ?= /opt/x-tools/arm-2008q3/bin/arm-none-eabi
+#LIB_GCC_DIR = /opt/x-tools/arm-2008q3/lib/gcc/arm-none-eabi/4.3.2/
+
 
 # The intermediate directory for compiled object files.
 BUILD = build/
