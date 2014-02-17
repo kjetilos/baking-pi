@@ -1,6 +1,5 @@
+#include "gpio.h"
 
-extern void PUT32 ( unsigned int, unsigned int );
-extern unsigned int GET32 ( unsigned int );
 extern void dummy ( unsigned int );
 
 #define BCM2708_PERI_BASE 0x20000000
@@ -41,15 +40,22 @@ extern void dummy ( unsigned int );
 #define BCM2835_EMPT1 0x2
 #define BCM2835_FULL1 0x1
 #define PM_PASSWORD 0x5A000000
-#define GPFSEL1 0x20200004
-#define GPSET0  0x2020001C
-#define GPCLR0  0x20200028
 #define ERRORMASK (BCM2835_GAPO2 | BCM2835_GAPO1 | \
     BCM2835_RERR1 | BCM2835_WERR1)
-#define MAXPRINT 5
+
 volatile unsigned* gpio = (void*)GPIO_BASE;
-volatile unsigned* clk = (void*)CLOCK_BASE;
 volatile unsigned* pwm = (void*)PWM_BASE;
+volatile unsigned* clk = (void*)CLOCK_BASE;
+
+typedef volatile unsigned reg32;
+
+typedef struct Clock
+{
+  reg32 CTL;
+  reg32 DIV;
+} Clock;
+
+static Clock * sclk = (Clock *)0x201010a0;
 
 void dummy ( unsigned int i )
 {
@@ -64,73 +70,59 @@ void pause(int t) {
     }
 }
 
-
 static void audio_init(void)
 {
-    SET_GPIO_ALT(40, 0);
-    SET_GPIO_ALT(45, 0);
-    pause(2);
-    *(clk + BCM2835_PWMCLK_CNTL) = PM_PASSWORD | (1 << 5); // stop clock
+  SET_GPIO_ALT(40, 0);
+  SET_GPIO_ALT(45, 0);
+  pause(2);
+  sclk->CTL = PM_PASSWORD | (1 << 5); // stop clock
 
-    //vals read from raspbian:
-    //PWMCLK_CNTL = 148 = 10010100
-    //PWMCLK_DIV = 16384
-    //PWM_CONTROL=9509 = 10010100100101
-    //PWM0_RANGE=1024
-    //PWM1_RANGE=1024
+  int idiv = 2; // raspbian has idiv set as 16384
+  *(clk + BCM2835_PWMCLK_DIV)  = PM_PASSWORD | (idiv<<12);
+ 
+  sclk->CTL = PM_PASSWORD | 16 | 1; // enable + oscillator
+                                                       // raspbian has this as plla
+  pause(2);
 
-    int idiv = 2; // raspbian has idiv set as 16384
-    *(clk + BCM2835_PWMCLK_DIV)  = PM_PASSWORD | (idiv<<12);
-   
-    *(clk + BCM2835_PWMCLK_CNTL) = PM_PASSWORD | 16 | 1; // enable + oscillator
-                                                         // raspbian has this as plla
-    pause(2);
+  // disable PWM
+  *(pwm + BCM2835_PWM_CONTROL) = 0;
+ 
+  pause(2);
 
-    // disable PWM
-    *(pwm + BCM2835_PWM_CONTROL) = 0;
-   
-    pause(2);
+  *(pwm+BCM2835_PWM0_RANGE) = 0x400;
+  *(pwm+BCM2835_PWM1_RANGE) = 0x400;
 
-    *(pwm+BCM2835_PWM0_RANGE) = 0x400;
-    *(pwm+BCM2835_PWM1_RANGE) = 0x400;
+  *(pwm+BCM2835_PWM_CONTROL) =
+        BCM2835_PWM1_USEFIFO |
+        BCM2835_PWM1_ENABLE  |
+        BCM2835_PWM0_USEFIFO |
+        BCM2835_PWM0_ENABLE  | 1<<6;
 
-    *(pwm+BCM2835_PWM_CONTROL) =
-          BCM2835_PWM1_USEFIFO |
-//          BCM2835_PWM1_REPEATFF |
-          BCM2835_PWM1_ENABLE |
-          BCM2835_PWM0_USEFIFO |
-//          BCM2835_PWM0_REPEATFF |  */
-          BCM2835_PWM0_ENABLE | 1<<6;
-
-    pause(2);
+  pause(2);
 }
 
-int notmain ( unsigned int earlypc )
+int audio_play()
 {
-    int i=0;
-    long status;
-    audio_init();
+  int i=0;
+  long status;
+  audio_init();
 
-    while (1) {
-        status =  *(pwm + BCM2835_PWM_STATUS);
-        if (!(status & BCM2835_FULL1)) {
-            *(pwm+BCM2835_PWM_FIFO) = 20*(i & 0x1f) ;
-            i++;
-        }
-        if ((status & ERRORMASK)) {
-//                uart_print("error: ");
-//                hexstring(status);
-//                uart_print("\r\n");
-            *(pwm+BCM2835_PWM_STATUS) = ERRORMASK;
-        }
+  while (1) {
+    status =  *(pwm + BCM2835_PWM_STATUS);
+    if (!(status & BCM2835_FULL1)) {
+      *(pwm+BCM2835_PWM_FIFO) = 20*(i & 0x1f) ;
+      i++;
     }
+    if ((status & ERRORMASK)) {
+      *(pwm+BCM2835_PWM_STATUS) = ERRORMASK;
+    }
+  }
 }
-
 
 void main()
 {
-  unsigned int * gpio = (unsigned int*)0x20200000;
-  gpio[1] = 1 << 18;
-  gpio[10] = 1 << 16;
-  notmain(0);
+  gpio_function_select(16, GPIO_OUTPUT);
+  gpio_set(16, 0); // 0 turns led on
+
+  audio_play();
 }
