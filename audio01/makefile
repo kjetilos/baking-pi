@@ -55,7 +55,7 @@ $(BUILD)%.o: $(SOURCE)%.c
 	$(CROSS_COMPILE)gcc -nostdlib -I $(SOURCE) -c $< -o $@
 
 $(BUILD)%.o: $(SOURCE)%.s
-	$(CROSS_COMPILE)as -I $(SOURCE) $< -o $@
+	$(CROSS_COMPILE)as -mfpu=vfp -I $(SOURCE) $< -o $@
 
 # Rule to clean files.
 clean : 
