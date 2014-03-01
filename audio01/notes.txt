@@ -1,0 +1,36 @@
+Analysis of this assembler sequence:
+
+  mrc p15, 0, r0, c1, c0, 2
+  orr r0, r0, #0x300000            @ single precision
+  orr r0, r0, #0xC00000            @ double precision
+  mcr p15, 0, r0, c1, c0, 2
+
+
+mrc = Move to ARM reg from co-processor
+=========================================
+MRC{cond} <cp_num>, <op1>, <Rd>, <CRn>, <CRm>{, <op2>}
+mrc p15, 0, r0, c1, c0, 2
+
+ cp_num = p15 (co-processor 15, system control coprocessor)
+ op1 = 0 (opcode_1 value for the register)
+ Rd = r0 (destination register)
+ CRn = c1 (register number withing co-processor)
+ CRm = c0 (operational register)
+ op2 = 2 (opcode_2 value for the register)
+
+CRn Op1 CRm Op2
+-----------------
+c1  0   c0  2    = Coprocessor Access Control
+
+Controls access to coprocessor 0-13 using 2 bits each
+
+Bits  Meaning
+================
+ 00 - Access denied
+ 01 - Privileged mode access only
+ 10 - Reserved
+ 11 - Privileged and User mode access
+ 
+0x300000 => Enable access to coprocessor 10 (VFP Single Precision)
+0xC00000 => Enable access to coprocessor 11 (VFP Double Precision)
+
