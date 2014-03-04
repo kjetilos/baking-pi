@@ -1,0 +1,88 @@
+ARM Interrupts 
+
+Vector Table
+===============
+
+The ARM Architecture Reference documents the interrupt behaviour as part of the Exception Handling. So in the documentation section "B1.8 Exception handling" we can find the description on how the "Vector Table" should look.
+
+Index Offset
+0     0x00    Reset
+1     0x04    Undefined Instruction
+2     0x08    Supervisor Call
+3     0x0c    Prefetch Abort
+4     0x10    Data Abort
+5     0x14    Hypervisor Trap
+6     0x18    IRQ interrupt
+7     0x1c    FIQ interrupt
+
+
+Step 1
+=======
+To handle IRQ's we need to setup the stack for the IRQ processor mode. This means that right after main we need to switch into the IRQ mode and set the stack pointer and then switch back to supervisor mode.
+
+brianwiddas: 
+  mov r4, #0x80000000
+  cps #0x12    // IRQ Mode
+  add sp, r4, #0x2c00
+  cps #0x13   // supervisor mode
+
+dwelch67:
+  mov r0, #0xD2 // IRQ Mode
+  msr cpsr_c, r0
+  mov sp, #0x8000
+
+  mov r0, #0xD3 // Supervisor mode
+  msr cpsr_c, r0
+  mov sp, #0x8000000
+
+
+cps is a cleaner instruction to use
+
+
+Step 2
+==========
+Copy interrupt vector table or set the new address
+
+Step 3
+========
+Enable interrupts
+
+
+IRQ
+=====
+
+
+FIQ
+======
+
+Processor Mode
+=================
+The ARM processor can be in different modes. At reset the mode of operation is Supervisor mode (SVC)
+
+usr - User 
+fiq - FIQ
+irq - IRQ
+svc - Supervisor
+mon - Monitor  (only with Security Extensions)
+abt - Abort
+hyp - Hyp  (only with Virtualization Extension)
+und - Undefined
+sys - System
+
+Current Program Status Register (CPSR)
+========================================
+The CPSR holds processor status and control information. It holds the current processor mode and interrupt masking bits. The CPSR also holds the condition flags.
+
+There are 3 mask bits:
+
+A - Asynchronous abort mask bit
+I - IRQ mask bit
+F - FIQ mask bit
+
+0 - Exception not masked
+1 - Exception masked
+
+
+Saved Program Status Registers (SPSRs)
+=======================================
+The purpose of this register is to record the pre-exception value of the CPSR. On taking an exception the CPSR is copied to the SPSR of the mode to which the exception is taken. 
